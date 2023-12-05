@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>CoCoSol WebSite</title>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">CoCoSol</div>
+    <ul class="nav-list">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="articles.html">Articles</a></li>
+        <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="burger-menu">&#9776;</div>
+</nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const burgerMenu = document.querySelector('.burger-menu');
+        const navList = document.querySelector('.nav-list');
+    
+        burgerMenu.addEventListener('click', function () {
+            navList.classList.toggle('show');
+        });
+    });
+    
+    </script>
+
+<div class="content">
+    <h1>WHOAMI ?</h1>
+
+    <p class="text-article">
+
+        Hello World ! <br>
+        My name is Corentin SOLOIS (CoCo_Sol).<br>
+        I'm 16 years old and I am a French coder with not much experience but a strong desire to learn.<br>
+        On this website, I will discuss my projects, share some thoughts on mathematics,<br>
+        or delve into the reason for existence.<br>
+        Or simply programming projects!<br>
+        <br>
+        I know this site doesn't look good but...<br>
+        I don't care !<br>
+
+    </p>
+    
+    <a href="https://github.com/CoCoSol007"><img class="github-mark" src="github-mark.png" alt="github logo"></a>
+    <a href="mailto:solois.corentin@gmail.com?subject=By Blog"><img class="github-mark" src="contact_me.png" alt=""></a>
+</div>
+
+</body>
+</html>
