@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>CoCoSol WebSite</title>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">CoCoSol</div>
+    <ul class="nav-list">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="articles.html">Articles</a></li>
+        <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="burger-menu">&#9776;</div>
+</nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const burgerMenu = document.querySelector('.burger-menu');
+        const navList = document.querySelector('.nav-list');
+
+        document.addEventListener('click', function (event) {
+            if (!navList.contains(event.target) && !burgerMenu.contains(event.target)) {
+                navList.classList.remove('show');
+            }
+        });
+    
+        burgerMenu.addEventListener('click', function () {
+            navList.classList.toggle('show');
+        });
+
+    });
+    
+    </script>
+
+<div class="content">
+        <h1>Some INTRESTING projects</h1>
+        <p>I love maths, programming and talking about the mistery of universe</p> <br>
+    <div class="projects" >
+        <h2>My favorite Article</h2>
+    </div>
+
+    <div class="articles" >
+        <h2>other articles</a></h2>
+    </div>
+</div>
+
+</body>
+</html>
