@@ -5,7 +5,6 @@ use rocket::{
     Route, FromForm, fs::TempFile, form::Form,
 };
 use uuid::Uuid;
-use std::env;
 
 
 
@@ -72,7 +71,7 @@ async fn upload_file(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
 
 
     let file_id: String = Uuid::new_v4().hyphenated().encode_lower(&mut Uuid::encode_buffer()).to_owned();
-    let file_name =  env::current_dir().expect("Impossible de récupérer le répertoire actuel").display().to_string()+&String::from("\\data\\") + &file_id + ".md";
+    let file_name = String::from("./data/") + &file_id + ".md";
 
     form.file.persist_to(file_name).await?;
 
