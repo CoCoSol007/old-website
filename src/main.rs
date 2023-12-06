@@ -33,6 +33,13 @@ raw_files! {
     "/contact_me.png" => contact_me_mark(SVG, "../webpages/contact_me.svg"),
 }
 
+#[get("/favicon.ico")]
+const fn favicon() -> (ContentType, &'static [u8]) {
+    let ico_data: &'static [u8] = include_bytes!("../webpages/favicon.ico");
+    let content_type = ContentType::Icon;
+
+    (content_type, ico_data)
+}
 
 
 /// The main function of the website.
@@ -46,4 +53,5 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
+        .mount("/", routes![favicon])
 }
