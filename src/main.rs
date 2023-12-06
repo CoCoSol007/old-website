@@ -1,12 +1,18 @@
 //! The main program of my website.
-
+pub mod articles;
+use crate::articles::*;
+use once_cell::sync::Lazy;
 use rocket::{
-    get, http::ContentType, launch, routes,Config,post,
-    Route, FromForm, fs::TempFile, form::Form,
+    get,
+    http::ContentType,
+    launch, routes,
+    serde::uuid::Uuid,
+    Config,Route,
 };
-use uuid::Uuid;
+use std::{collections::HashMap, sync::RwLock};
 
-
+/// a struct to store articles.
+static ARTICLES: Lazy<RwLock<HashMap<Uuid, Article>>> = Lazy::new(|| RwLock::new(HashMap::new()));
 
 /// a macro to define a route.
 macro_rules! raw_files {
@@ -37,6 +43,7 @@ raw_files! {
     "/contact_me.png" => contact_me_mark(SVG, "../webpages/contact_me.svg"),
 }
 
+/// a fonction to give the icon of the webpage.
 #[get("/favicon.ico")]
 const fn favicon() -> (ContentType, &'static [u8]) {
     let ico_data: &'static [u8] = include_bytes!("../webpages/favicon.ico");
@@ -45,44 +52,11 @@ const fn favicon() -> (ContentType, &'static [u8]) {
     (content_type, ico_data)
 }
 
-// Article System API
-
-struct Articles {
-    articles: Vec<Article>,
-}
-
-/// An article.
-struct Article {
-    title: String,
-    intro: String,
-    id: String,
-}
-
-
-#[derive(FromForm)]
-struct Upload<'f> {
-    file: TempFile<'f>,
-    title: String, // the title of the article
-    intro: String, // a short description of the article
-}
-
-#[post("/upload", format = "multipart/form-data", data = "<form>")]
-async fn upload_file(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
-
-
-    let file_id: String = Uuid::new_v4().hyphenated().encode_lower(&mut Uuid::encode_buffer()).to_owned();
-    let file_name = String::from("./data/") + &file_id + ".md";
-
-    form.file.persist_to(file_name).await?;
-
-    Ok(())
-
-}
-
-
-/// The main function of the website.
+// The main function of the website.
 #[launch]
 async fn rocket() -> _ {
+    load_article();
+
     rocket::build()
         .configure(Config {
             // pas de output
@@ -92,5 +66,5 @@ async fn rocket() -> _ {
         })
         .mount("/", raw_routes())
         .mount("/", routes![favicon])
-        .mount("/", routes![upload_file])
+        .mount("/api", routes![new_article])
 }
