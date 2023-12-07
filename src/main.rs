@@ -2,13 +2,7 @@
 pub mod articles;
 use crate::articles::*;
 use once_cell::sync::Lazy;
-use rocket::{
-    get,
-    http::ContentType,
-    launch, routes,
-    serde::uuid::Uuid,
-    Config,Route,
-};
+use rocket::{get, http::ContentType, launch, routes, serde::uuid::Uuid, Config, Route};
 use std::{collections::HashMap, sync::RwLock};
 
 /// a struct to store articles.
@@ -66,5 +60,5 @@ async fn rocket() -> _ {
         })
         .mount("/", raw_routes())
         .mount("/", routes![favicon])
-        .mount("/api", routes![new_article])
+        .mount("/api", routes![new_article, get_article_list, get_article, get_minia_article])
 }

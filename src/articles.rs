@@ -1,10 +1,10 @@
 //! This module contain programs about Articles
 
-
-
-use rocket::{form::Form, fs::TempFile, post, serde::uuid::Uuid, FromForm};
+use rocket::{form::Form, fs::TempFile, get, post, serde::uuid::Uuid, FromForm};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fs::File};
+use std::{collections::HashMap, io::Read};
+use rocket::serde::json::Json;
+use std::fs::File;
 
 /// An article.
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -24,10 +24,9 @@ pub struct Upload<'f> {
     intro: String, // a short description of the article
 }
 
-// a fonction that get new articles  
+// a fonction that get new articles
 #[post("/new-article", format = "multipart/form-data", data = "<form>")]
 pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
-    
     // upload the file
     let file_id: String = Uuid::new_v4()
         .hyphenated()
@@ -67,8 +66,36 @@ pub fn load_article() {
     // on affichie si il y a une erreur
     let articles: HashMap<Uuid, Article> =
         serde_json::from_reader(file).expect("Failed to read articles");
+    super::ARTICLES.write().unwrap().extend(articles);
+}
+
+#[get("/get-article-list")]
+pub fn get_article_list() ->  Json<Vec<Uuid>> {
+    Json(super::ARTICLES.read().unwrap().keys().copied().collect())
+}
+
+/// a function to get an article with its id.
+#[get("/article-minia/<id>")]
+pub async fn get_minia_article(id: Uuid) -> Option<Json<Article>> {
+    // On récupère l'accès aux articles qui sont dans un RwLock puis,
+    // on récupère l'article et si il existe on le convertis en Json
+    // sinon on renvoit None ce qui a pour effet de faire une erreur 404
     super::ARTICLES
-        .write()
+        .read()
         .unwrap()
-        .extend(articles);
+        .get(&id)
+        .map(|article| Json(article.clone()))
+}
+
+#[get("/article/<id>")]
+pub async fn get_article(id: Uuid) -> String {
+    // on download larticle dans /data/articles/id.md
+    let mut file = File::open(format!("./data/articles/{}.md", id)).expect("Failed to open file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Failed to read file").to_string();
+
+    contents
+
+
+    
 }
