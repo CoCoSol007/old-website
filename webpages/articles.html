@@ -48,6 +48,36 @@
     <div class="articles" >
         <h2>other articles</a></h2>
     </div>
+
+    <script>
+        // recuperer les article minia et les afficher dans .projects et articles
+        fetch("/api/articles").then(response => response.json()).then(data => {
+            for (let i = 0; i < data.length; i++) {
+                fetch("/api/article-minia/" + data[i]).then(response => response.json()).then(data => {
+                    // creation d'un bouton pour chaque article
+                    const article = document.createElement("button");
+                    article.classList.add("article");
+                    const title = document.createElement("h2");
+                    title.innerHTML = data.title;
+                    article.appendChild(title);
+                    const intro = document.createElement("p");
+                    intro.innerHTML = data.intro;
+                    article.appendChild(intro);
+
+                    const url ="/article/"+data.id; 
+                    // quand on clic sur le bouton
+                    article.addEventListener("click", () => {
+                        window.location.href = url;
+                    })
+                    
+                    document.querySelector(".projects").appendChild(article);
+
+                    
+                })                    
+            }
+        })
+    </script>
+
 </div>
 
 </body>

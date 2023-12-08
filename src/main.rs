@@ -35,6 +35,7 @@ raw_files! {
     "/style.css" => style(CSS, "../webpages/style.css"),
     "/github-mark.png" => github_mark(SVG, "../webpages/github-mark.svg"),
     "/contact_me.png" => contact_me_mark(SVG, "../webpages/contact_me.svg"),
+    "/article/<_>" => article_page(HTML, "../webpages/article.html"),
 }
 
 /// a fonction to give the icon of the webpage.

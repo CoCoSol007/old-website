@@ -21,6 +21,34 @@ body {
     color: #fff;
     font-size: 1.5em;
     font-weight: bold;
+}
+
+.article{
+    margin-top: 5%;
+    width: 95%;
+    font-size:1vw;
+    border-radius: 5px;
+}
+
+.article:hover{
+    background-color: rgb(228, 228, 228);
+}
+
+.article p {
+    margin-left: 5%;
+    margin-right: 5%;
+    text-align: left;
+}
+
+.markdown{
+    width: 80%;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 5%;
+    border: 1px solid;
+    border-radius: 25px;
+    background-color: rgb(228, 228, 228);
 
 }
 

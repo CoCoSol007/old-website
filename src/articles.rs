@@ -69,7 +69,7 @@ pub fn load_article() {
     super::ARTICLES.write().unwrap().extend(articles);
 }
 
-#[get("/get-article-list")]
+#[get("/articles")]
 pub fn get_article_list() ->  Json<Vec<Uuid>> {
     Json(super::ARTICLES.read().unwrap().keys().copied().collect())
 }
