@@ -72,11 +72,16 @@ pub fn load_article() {
 
 // a function to get a random article
 #[get("/random-article")]
-pub fn get_random_article() -> Json<Article> {
+pub fn get_random_article() -> Json<Option<Article>> {
+    // manage if the articles are empty
+    if super::ARTICLES.read().unwrap().is_empty() {
+        // we send nothing
+        return Json(None);
+    }
     let articles = super::ARTICLES.read().unwrap();
     let keys: Vec<&Uuid> = articles.keys().collect();
     let random_index = rand::thread_rng().gen_range(0..keys.len());
-    rocket::serde::json::Json(articles.get(keys[random_index]).unwrap().clone())
+    Json(Some(articles.get(keys[random_index]).unwrap().clone()))
 }
 
 #[get("/articles")]
