@@ -11,3 +11,4 @@ rocket = { version = "0.5.0", features = ["json", "uuid"] }
 serde_json = "1.0.108"
 uuid = { version = "1.6.1", features = ["v4"] }
 serde = { version = "1.0.190", features = ["derive"] }
+rand = "0.8.5"

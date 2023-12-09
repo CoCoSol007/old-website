@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io::Read};
 use rocket::serde::json::Json;
 use std::fs::File;
+use rand::Rng;
 
 /// An article.
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -67,6 +68,15 @@ pub fn load_article() {
     let articles: HashMap<Uuid, Article> =
         serde_json::from_reader(file).expect("Failed to read articles");
     super::ARTICLES.write().unwrap().extend(articles);
+}
+
+// a function to get a random article
+#[get("/random-article")]
+pub fn get_random_article() -> Json<Article> {
+    let articles = super::ARTICLES.read().unwrap();
+    let keys: Vec<&Uuid> = articles.keys().collect();
+    let random_index = rand::thread_rng().gen_range(0..keys.len());
+    rocket::serde::json::Json(articles.get(keys[random_index]).unwrap().clone())
 }
 
 #[get("/articles")]

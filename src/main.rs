@@ -57,9 +57,10 @@ async fn rocket() -> _ {
             // pas de output
             log_level: rocket::config::LogLevel::Critical,
             port: 80,
+            address: "192.168.1.86".parse().unwrap(),
             ..Default::default()
         })
         .mount("/", raw_routes())
         .mount("/", routes![favicon])
-        .mount("/api", routes![new_article, get_article_list, get_article, get_minia_article])
+        .mount("/api", routes![new_article, get_article_list, get_article, get_minia_article, get_random_article])
 }

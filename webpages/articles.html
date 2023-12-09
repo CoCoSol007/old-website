@@ -42,11 +42,11 @@
         <h1>Some INTRESTING articles</h1>
         <p>I love maths, programming and talking about the mistery of universe</p> <br>
     <div class="projects" >
-        <h2>My favorite Article</h2>
+        <h2>other articles</h2>
     </div>
 
     <div class="articles" >
-        <h2>other articles</a></h2>
+        <h2>My favorite Article</h2>
     </div>
 
     <script>
@@ -75,6 +75,27 @@
                     
                 })                    
             }
+        })
+
+        fetch("/api/random-article").then(response => response.json()).then(data => {
+            
+            const article = document.createElement("button");
+            article.classList.add("article");
+            const title = document.createElement("h2");
+            title.innerHTML = data.title;
+            article.appendChild(title);
+            const intro = document.createElement("p");
+            intro.innerHTML = data.intro;
+            article.appendChild(intro);
+
+            const url ="/article/"+data.id; 
+            // quand on clic sur le bouton
+            article.addEventListener("click", () => {
+                window.location.href = url;
+            })
+            
+            document.querySelector(".articles").appendChild(article);
+                        
         })
     </script>
 
