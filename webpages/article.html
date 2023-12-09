@@ -46,7 +46,7 @@
                 console.log(data);
                 const markdown = marked(data);
                 // on transforme le markdown en html
-                const html = marked(markdown);
+                const html =markdown;
                 // on met le html dans le markdown
                 document.querySelector(".markdown").innerHTML = html;
             })});
