@@ -16,6 +16,13 @@ body {
     z-index: 1000;
 }
 
+.markdown pre {
+    padding: 2%;
+    background-color: rgb(197, 193, 193);
+    border: #333 1px solid;
+    border-radius: 5px;
+}  
+
 .logo {
     padding-left: 2%;
     color: #fff;
