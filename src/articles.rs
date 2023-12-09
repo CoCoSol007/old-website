@@ -49,16 +49,16 @@ pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
     articles.insert(uuid, article);
 
     // update the memory
-    let json_content = serde_json::to_string_pretty(&*articles);
-    println!("{:?}", json_content);
-    match serde_json::to_writer_pretty(&File::create("data/articles.json")?, &*articles) {
-        Ok(_) => println!("Successfully wrote articles.json"),
-        Err(e) => {
-            println!("Failed to write articles.json: {}", e);
-        }
-    };
+    let result = serde_json::to_writer_pretty(&File::create("data/articles.json")?, &*articles);
+    if result.is_err() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "Failed to write articles", 
+        ))
+    } else {
+        return Ok(())
+    }
 
-    Ok(())
 }
 
 // a fonction to load article.json a put the data into ARTICLES
