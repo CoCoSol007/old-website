@@ -26,7 +26,7 @@ pub struct Upload<'f> {
 }
 
 // a fonction that get new articles
-#[post("/new-article", format = "multipart/form-data", data = "<form>")]
+#[post("/new", format = "multipart/form-data", data = "<form>")]
 pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
     // upload the file
     let file_id: String = Uuid::new_v4()
@@ -71,7 +71,7 @@ pub fn load_article() {
 }
 
 // a function to get a random article
-#[get("/random-article")]
+#[get("/random")]
 pub fn get_random_article() -> Json<Option<Article>> {
     // manage if the articles are empty
     if super::ARTICLES.read().unwrap().is_empty() {
@@ -84,13 +84,13 @@ pub fn get_random_article() -> Json<Option<Article>> {
     Json(Some(articles.get(keys[random_index]).unwrap().clone()))
 }
 
-#[get("/articles")]
+#[get("/list")]
 pub fn get_article_list() ->  Json<Vec<Uuid>> {
     Json(super::ARTICLES.read().unwrap().keys().copied().collect())
 }
 
 /// a function to get an article with its id.
-#[get("/article-minia/<id>")]
+#[get("/minia/<id>")]
 pub async fn get_minia_article(id: Uuid) -> Option<Json<Article>> {
     // On récupère l'accès aux articles qui sont dans un RwLock puis,
     // on récupère l'article et si il existe on le convertis en Json
@@ -102,7 +102,7 @@ pub async fn get_minia_article(id: Uuid) -> Option<Json<Article>> {
         .map(|article| Json(article.clone()))
 }
 
-#[get("/article/<id>")]
+#[get("/get/<id>")]
 pub async fn get_article(id: Uuid) -> String {
     // on download larticle dans /data/articles/id.md
     let mut file = File::open(format!("./data/articles/{}.md", id)).expect("Failed to open file");

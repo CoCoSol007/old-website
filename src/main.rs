@@ -42,5 +42,5 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
-        .mount("/api", routes![new_article, get_article_list, get_article, get_minia_article, get_random_article])
+        .mount("/article", routes![new_article, get_article_list, get_article, get_minia_article, get_random_article])
 }
