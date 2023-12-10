@@ -41,7 +41,7 @@
         const path = window.location;
         const uid = path.toString().split("/").slice(-1)[0];
 
-        fetch("/api/article/" + uid)
+        fetch("/article/get/" + uid)
             .then(response => response.text()).then(data => {
                 console.log(data);
                 const markdown = marked(data);

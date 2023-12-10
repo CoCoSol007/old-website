@@ -51,9 +51,9 @@
 
     <script>
         // recuperer les article minia et les afficher dans .projects et articles
-        fetch("/api/articles").then(response => response.json()).then(data => {
+        fetch("/article/list").then(response => response.json()).then(data => {
             for (let i = 0; i < data.length; i++) {
-                fetch("/api/article-minia/" + data[i]).then(response => response.json()).then(data => {
+                fetch("/article/minia/" + data[i]).then(response => response.json()).then(data => {
                     // creation d'un bouton pour chaque article
                     const article = document.createElement("button");
                     article.classList.add("article");
@@ -77,7 +77,7 @@
             }
         })
 
-        fetch("/api/random-article").then(response => response.json()).then(data => {
+        fetch("/article/random").then(response => response.json()).then(data => {
             
             const article = document.createElement("button");
             article.classList.add("article");
