@@ -30,6 +30,7 @@ raw_files! {
     "/projects" => projects_page(HTML, "../webpages/projects.html"),
     "/about" => about_page(HTML, "../webpages/about.html"),
     "/services" => services_page(HTML, "../webpages/services.html"),
+    "/github-mark.svg" => github_mark(SVG, "../webpages/github-mark.svg"),
 }
 
 // The main function of the website.
