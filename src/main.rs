@@ -27,6 +27,9 @@ macro_rules! raw_files {
 
 raw_files! {
     "/" => main_page(HTML, "../webpages/main.html"),
+    "/projects" => projects_page(HTML, "../webpages/projects.html"),
+    "/about" => about_page(HTML, "../webpages/about.html"),
+    "/services" => services_page(HTML, "../webpages/services.html"),
 }
 
 // The main function of the website.

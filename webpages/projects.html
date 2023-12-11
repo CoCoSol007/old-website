@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <title>CoCoSol</title>
+</head>
+
+<body class="bg-yellow-50">
+  <!-- Navigation -->
+  <nav class="bg-gray-800 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="text-white font-bold text-xl">CoCoSol</div>
+      <ul class="hidden md:flex space-x-4">
+        <li><a href="/" class="text-white hover:text-blue-500">Home</a></li>
+        <li><a href="/services" class="text-white hover:text-blue-500">Servicess</a></li>
+        <li><a href="/projects" class="text-white hover:text-blue-500">Projects</a></li>
+        <li><a href="/about" class="text-white hover:text-blue-500">About me</a></li>
+      </ul>
+      <div class="md:hidden">
+        <button id="menuBtn" class="text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="md:hidden mt-2 hidden">
+      <ul class="flex flex-col space-y-2">
+        <li><a href="/" class="text-white">Home</a></li>
+        <li><a href="/services" class="text-white">Servicess</a></li>
+        <li><a href="/projects" class="text-white">Projects</a></li>
+        <li><a href="/about" class="text-white">About me</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Articles Section -->
+  <section class="bg-yellow-50 py-10">
+    <div class="container mx-auto">
+      <h1 class="text-4xl font-bold mb-8">Latest Articles</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Replace the following with your actual articles -->
+        <button class="article-card hover:bg-yellow-100 rounded-lg transition duration-300">
+          <h2 class="text-xl font-bold mb-2">Article Title 1</h2>
+          <p class="text-gray-600">Intro for the article.</p>
+          <img src="/geek.jpg" alt="Article Image" class="rounded-lg w-full mt-4">
+        </button>
+
+        <button class="article-card hover:bg-yellow-100 rounded-lg transition duration-300">
+            <h2 class="text-xl font-bold mb-2">Article Title 2</h2>
+            <p class="text-gray-600">Intro for the article.</p>
+            <img src="/geek.jpg" alt="Article Image" class="rounded-lg w-full mt-4">
+        </button>
+
+        <!-- Add more article cards as needed -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="bg-yellow-100 py-10">
+    <div class="container mx-auto">
+      <h1 class="text-4xl font-bold mb-8">Featured Projects</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Replace the following with your actual projects -->
+        <button class="project-card hover:bg-yellow-200 rounded-lg transition duration-300">
+          <h2 class="text-xl font-bold mb-2">Project Title 1</h2>
+          <p class="text-gray-600">Description of the project.</p>
+          <img src="/geek.jpg" alt="Project Image" class="rounded-lg w-full mt-4">
+        </button>
+
+        <button class="project-card hover:bg-yellow-200 rounded-lg transition duration-300" >
+          <h2 class="text-xl font-bold mb-2">Project Title 2</h2>
+          <p class="text-gray-600">Description of the project.</p>
+          <img src="/geek.jpg" alt="Project Image" class="rounded-lg w-full mt-4">
+        </button>
+
+        <!-- Add more project cards as needed -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-4 text-center w-full fixed bottom-0">
+    <p class="text-sm">© 2023 My Website. All rights reserved.</p>
+  </footer>
+
+  <!-- Script for mobile menu toggle -->
+  <script>
+    const mobileMenu = document.getElementById('mobileMenu')
+    document.getElementById('menuBtn').addEventListener('click', function () {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+
+</html>
