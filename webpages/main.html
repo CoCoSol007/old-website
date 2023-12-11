@@ -1,11 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoCoSol</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    This site is in progress.    
-</body>
+
+    
+
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+          <div class="text-white font-bold text-xl">Logo</div>
+          <ul class="hidden md:flex space-x-4">
+            <li><a href="#" class="text-white hover:text-blue-500">Accueil</a></li>
+            <li><a href="#" class="text-white hover:text-blue-500">Services</a></li>
+            <li><a href="#" class="text-white hover:text-blue-500">À propos</a></li>
+            <li><a href="#" class="text-white hover:text-blue-500">Contact</a></li>
+          </ul>
+          <div class="md:hidden">
+            <button id="menuBtn" class="text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="mobileMenu" class="md:hidden mt-2">
+          <ul class="flex flex-col space-y-2">
+            <li><a href="#" class="text-white">Accueil</a></li>
+            <li><a href="#" class="text-white">Services</a></li>
+            <li><a href="#" class="text-white">À propos</a></li>
+            <li><a href="#" class="text-white">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+      <br>
+      <div class="flex flex-col md:flex-row">
+        <div class="w-99% md:w-1/2 p-4 border-2 border-gray-800 mx-5 md:mx-5">
+          Colonne A
+        </div> <br>
+        <div class="w-99% md:w-1/2 p-4 border-2 border-gray-800 mx-5 mt-4 md:mt-0">
+          Colonne B
+        </div>
+      </div>
+      
+
+      
+      <script>
+        document.getElementById('menuBtn').addEventListener('click', function () {
+          document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+      </script>
+    
+</body>    
 </html>
