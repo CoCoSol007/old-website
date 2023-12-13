@@ -1,11 +1,11 @@
 //! This module contain programs about Articles
 
-use rocket::{form::Form, fs::TempFile, get, post, serde::uuid::Uuid, FromForm};
-use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::Read};
-use rocket::serde::json::Json;
-use std::fs::File;
 use rand::Rng;
+use rocket::serde::json::Json;
+use rocket::{form::Form, fs::TempFile, get, http::ContentType, post, serde::uuid::Uuid, FromForm};
+use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::{collections::HashMap, io::Read};
 
 /// An article.
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -21,6 +21,7 @@ pub struct Article {
 #[derive(FromForm)]
 pub struct Upload<'f> {
     file: TempFile<'f>,
+    img: TempFile<'f>,
     title: String, // the title of the article
     intro: String, // a short description of the article
 }
@@ -35,6 +36,9 @@ pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
         .to_owned();
     let file_name = String::from("./data/articles/") + &file_id + ".md";
     form.file.persist_to(file_name).await?;
+
+    let img_name = String::from("./data/img/") + &file_id + ".png";
+    form.img.persist_to(img_name).await?;
 
     // create an article.
     let article = Article {
@@ -53,12 +57,11 @@ pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
     if result.is_err() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::Other,
-            "Failed to write articles", 
-        ))
+            "Failed to write articles",
+        ));
     } else {
-        return Ok(())
+        return Ok(());
     }
-
 }
 
 // a fonction to load article.json a put the data into ARTICLES
@@ -85,8 +88,26 @@ pub fn get_random_article() -> Json<Option<Article>> {
 }
 
 #[get("/list")]
-pub fn get_article_list() ->  Json<Vec<Uuid>> {
+pub fn get_article_list() -> Json<Vec<Uuid>> {
     Json(super::ARTICLES.read().unwrap().keys().copied().collect())
+}
+
+#[get("/img/<id>")]
+pub fn get_images(id: Uuid) -> Option<(ContentType, Vec<u8>)> {
+    let file = File::open(format!("data/img/{}.png", id.to_string()));
+    if let Ok(mut file) = file {
+        let mut buf = vec![];
+        let opened_file = file.read_to_end(&mut buf);
+        if let Ok(_) = opened_file {
+            Some((ContentType::PNG, buf))
+        } else {
+            println!("request without great uuid !");
+            None 
+        }
+    } else {
+        println!("failed to open data/img/{}.png", id.to_owned());
+        None
+    }
 }
 
 /// a function to get an article with its id.
@@ -107,10 +128,9 @@ pub async fn get_article(id: Uuid) -> String {
     // on download larticle dans /data/articles/id.md
     let mut file = File::open(format!("./data/articles/{}.md", id)).expect("Failed to open file");
     let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("Failed to read file").to_string();
+    file.read_to_string(&mut contents)
+        .expect("Failed to read file")
+        .to_string();
 
     contents
-
-
-    
 }

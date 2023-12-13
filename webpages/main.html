@@ -43,32 +43,18 @@
       <div class="bg-white w-full p-4  rounded-lg  md:mx-5-200 mb-10 shadow-md">
         <h1 class="text-3xl font-bold mb-4">My Favourite <a href="/projects" class="hover:text-blue-500">Article</a></h1>
         <br>
-        <div id="articles" class="container mx-auto w-90%">
-          <button
-            class="mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg"
-            onclick="window.location.href='article.html';">
-            <h2 class="text-2xl font-bold">Article Title</h2>
-            <p class="text-lg">Intro de l'article.</p>
-            <img src="/geek.jpg" alt="article image" class="rounded-lg w-full ">
-          </button>
+        <div id="article" class="container mx-auto w-90%">
         </div>
       </div>
       <div class="bg-white w-full p-4  rounded-lg  md:mx-5-200 mb-10 shadow-md">
         <h1 class="text-3xl font-bold mb-4">My Favourite <a href="/projects" class="hover:text-blue-500">Project</a></h1>
         <br>
         <div id="project" class="container mx-auto w-90%">
-          <button
-            class="mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg "
-            onclick="window.location.href='article.html';">
-            <h2 class="text-2xl font-bold">Article Title</h2>
-            <p class="text-lg">Intro de l'article.</p>
-            <img src="/geek.jpg" alt="article image" class="rounded-lg w-full ">
-          </button>
         </div>
       </div>
     </div>
     <div class="w-full md:w-1/2 p-4 mt-4 md:mt-0">
-      <img src="/geek.jpg" alt="geek" class="rounded-lg w-full">
+      <img src="/pp.jpg" alt="pp" class="rounded-lg w-full">
       <div
         class="bg-white w-full p-4  rounded-lg  text-xl md:text-2xl md:mx-5-200 mt-10 shadow-md">
         <h1 class="text-3xl font-bold mb-4 text-center">Whoami ?</h1> <br><br>
@@ -88,6 +74,34 @@
   </div>
 
   <script>
+    for (let i = 0; i < 2; i++) {
+      const path = ['article', 'project'][i]
+      fetch("/" + path + "/random").then(reponse => reponse.json()).then(data=>{
+        const article = document.getElementById('' + path)
+        const  button_container = document.createElement('button')
+        button_container.setAttribute('class', 'mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg')
+      button_container.onclick = function(){
+        window.location.href = path + '.html'
+      }
+      const h2 = document.createElement('h2')
+      h2.setAttribute('class', 'text-2xl font-bold')  
+      h2.innerText = data.title
+      const p = document.createElement('p')
+      p.setAttribute('class', 'text-lg')
+      p.innerText = data.intro
+      const img = document.createElement('img')
+      img.setAttribute('class', 'rounded-lg w-full ')
+      img.src = '/' + path +  '/img/' + data.id
+      
+      button_container.appendChild(h2)
+      button_container.appendChild(p)
+      button_container.appendChild(img)
+      
+      article.appendChild(button_container)
+      
+    })
+  }
+
     const mobileMenu = document.getElementById('mobileMenu')
     document.getElementById('menuBtn').addEventListener('click', function () {
       mobileMenu.classList.toggle('hidden');

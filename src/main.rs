@@ -31,6 +31,7 @@ raw_files! {
     "/about" => about_page(HTML, "../webpages/about.html"),
     "/services" => services_page(HTML, "../webpages/services.html"),
     "/github-mark.svg" => github_mark(SVG, "../webpages/github-mark.svg"),
+    "/add" => temp(HTML, "../webpages/temp.html"),
 }
 
 // The main function of the website.
@@ -46,5 +47,15 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
-        .mount("/article", routes![new_article, get_article_list, get_article, get_minia_article, get_random_article])
+        .mount(
+            "/article",
+            routes![
+                get_images,
+                new_article,
+                get_article_list,
+                get_article,
+                get_minia_article,
+                get_random_article
+            ],
+        )
 }

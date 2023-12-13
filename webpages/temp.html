@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form action="/article/new" method="post" enctype="multipart/form-data">
+        <label for="name">name</label>
+        <input id="name" type="text" name="title">
+
+        <label for="intro">intro</label>
+        <input id="intro" type="text" name="intro">
+
+        <label for="img">img</label>
+        <input id="img" type="file" name="img" accept=".png" >
+
+        <label for="file">file</label>
+        <input id="file" type="file" name="file">
+
+        <input type="submit">
+    </form>
+    
+</body>
+</html>
