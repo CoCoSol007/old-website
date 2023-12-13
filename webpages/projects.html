@@ -16,7 +16,7 @@
       <ul class="hidden md:flex space-x-4">
         <li><a href="/" class="text-white hover:text-blue-500">Home</a></li>
         <li><a href="/services" class="text-white hover:text-blue-500">Servicess</a></li>
-        <li><a href="/projects" class="text-white hover:text-blue-500">Projects</a></li>
+        <li><a href="/projects" class="text-white hover:text-blue-500">Article</a></li>
         <li><a href="/about" class="text-white hover:text-blue-500">About me</a></li>
       </ul>
       <div class="md:hidden">
@@ -33,7 +33,7 @@
       <ul class="flex flex-col space-y-2">
         <li><a href="/" class="text-white">Home</a></li>
         <li><a href="/services" class="text-white">Servicess</a></li>
-        <li><a href="/projects" class="text-white">Projects</a></li>
+        <li><a href="/projects" class="text-white">Article</a></li>
         <li><a href="/about" class="text-white">About me</a></li>
       </ul>
     </div>
@@ -51,56 +51,23 @@
     </div>
   </section>
 
-  <!-- Projects Section -->
-  <section class="bg-gray-200 py-10">
-    <div class="container mx-auto">
-      <h1 class="text-4xl font-bold mb-8">Featured Projects</h1>
-      <div id="project" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Replace the following with your actual projects -->
-        
-
-        <!-- Add more project cards as needed -->
-      </div>
-    </div>
-  </section>
-
-  <!-- Script for mobile menu toggle -->
+    <!-- Script for mobile menu toggle -->
   <script>
-    for (let i = 0; i < 2; i++) {
-      const path = ["article", "project"][i];
-      fetch("/" + path + "/list").then(response => {
+      fetch("/article/list").then(response => {
         response.json().then(data => {
           for (element of data) {
-            // fetch("/" + path + "/get/" + element).then(final_data => {
-            //   final_data.json().then(data => {
-            //     const container = document.getElementsById(path);
-            //     const button = document.createElement("button");
-            //     button.classList.add("article-card", "hover:bg-gray-100", "rounded-lg", "transition", "duration-300", "bg-white", "shadow-md");
-            //     button.innerHTML = `
-            //     <h2 class="text-xl font-bold mb-2">${data.title}</h2>
-            //     <p class="text-gray-600">${data.intro}</p>
-            //     <img src="${data.image}" alt="Article Image" class="rounded-lg w-full mt-4">
-            //     `;
-            //     button.onclick = () => {
-            //       window.location.href = "/" + path + "/" + data.id
-            //     }
-            //     container.appendChild(button);
-                
-            //   })
-            // })
-
-          fetch("/"+path+"/minia/"+ element).then(response => {
+          fetch("/article/minia/"+ element).then(response => {
             response.json().then(data => {
-              const container = document.getElementById(path);
+              const container = document.getElementById("article");
               const button = document.createElement("button");
-              button.classList.add("article-card", "hover:bg-gray-300", "rounded-lg", "transition", "duration-300", "bg-white", "shadow-md");
+              button.classList.add("article-card", "hover:bg-gray-200", "rounded-lg", "transition", "duration-300", "bg-white", "shadow-md");
               button.innerHTML = `
               <h2 class="text-xl font-bold mb-2">${data.title}</h2>
               <p class="text-gray-600">${data.intro}</p>
-              <img src="/${path}/img/${data.id}" alt="Article Image" class="rounded-lg w-full mt-4">
+              <img src="/article/img/${data.id}" alt="Article Image" class="rounded-lg w-full mt-4">
               `;
               button.onclick = () => {
-                window.location.href = "/" + path + "/" + data.id
+                window.location.href = "/article/" + data.id
               }
               container.appendChild(button);
             })
@@ -108,7 +75,6 @@
           }
         })
       })
-    }
 
 
     const mobileMenu = document.getElementById('mobileMenu')

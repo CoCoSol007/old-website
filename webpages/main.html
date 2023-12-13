@@ -15,7 +15,7 @@
       <ul class="hidden md:flex space-x-4">
         <li><a href="/" class="text-white hover:text-blue-500">Home</a></li>
         <li><a href="/services" class="text-white hover:text-blue-500">Services</a></li>
-        <li><a href="/projects" class="text-white hover:text-blue-500">Projects</a></li>
+        <li><a href="/projects" class="text-white hover:text-blue-500">Article</a></li>
         <li><a href="/about" class="text-white hover:text-blue-500">About me</a></li>
       </ul>
       <div class="md:hidden">
@@ -32,7 +32,7 @@
       <ul class="flex flex-col space-y-2">
         <li><a href="/" class="text-white">Home</a></li>
         <li><a href="/services" class="text-white">Services</a></li>
-        <li><a href="/projects" class="text-white">Projects</a></li>
+        <li><a href="/projects" class="text-white">Article</a></li>
         <li><a href="/about" class="text-white">About me</a></li>
       </ul>
     </div>
@@ -44,12 +44,6 @@
         <h1 class="text-3xl font-bold mb-4">My Favourite <a href="/projects" class="hover:text-blue-500">Article</a></h1>
         <br>
         <div id="article" class="container mx-auto w-90%">
-        </div>
-      </div>
-      <div class="bg-white w-full p-4  rounded-lg  md:mx-5-200 mb-10 shadow-md">
-        <h1 class="text-3xl font-bold mb-4">My Favourite <a href="/projects" class="hover:text-blue-500">Project</a></h1>
-        <br>
-        <div id="project" class="container mx-auto w-90%">
         </div>
       </div>
     </div>
@@ -74,14 +68,12 @@
   </div>
 
   <script>
-    for (let i = 0; i < 2; i++) {
-      const path = ['article', 'project'][i]
-      fetch("/" + path + "/random").then(reponse => reponse.json()).then(data=>{
-        const article = document.getElementById('' + path)
+      fetch("/article/random").then(reponse => reponse.json()).then(data=>{
+        const article = document.getElementById('article')
         const  button_container = document.createElement('button')
         button_container.setAttribute('class', 'mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg')
       button_container.onclick = function(){
-        window.location.href = path + '.html'
+        window.location.href = '/article/' + data.id
       }
       const h2 = document.createElement('h2')
       h2.setAttribute('class', 'text-2xl font-bold')  
@@ -91,7 +83,7 @@
       p.innerText = data.intro
       const img = document.createElement('img')
       img.setAttribute('class', 'rounded-lg w-full ')
-      img.src = '/' + path +  '/img/' + data.id
+      img.src = '/article/img/' + data.id
       
       button_container.appendChild(h2)
       button_container.appendChild(p)
@@ -100,7 +92,6 @@
       article.appendChild(button_container)
       
     })
-  }
 
     const mobileMenu = document.getElementById('mobileMenu')
     document.getElementById('menuBtn').addEventListener('click', function () {
