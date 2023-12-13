@@ -36,6 +36,11 @@ raw_files! {
     "/style.css" => style(CSS, "../webpages/style.css"),
 }
 
+#[get("/logo")]
+fn logo() -> (ContentType, &'static [u8]) {
+    (ContentType::PNG, include_bytes!("../webpages/logo.png"))
+}
+
 // The main function of the website.
 #[launch]
 async fn rocket() -> _ {
@@ -49,6 +54,7 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
+        .mount("/", routes![logo])
         .mount(
             "/article",
             routes![
