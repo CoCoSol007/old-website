@@ -41,6 +41,11 @@ fn logo() -> (ContentType, &'static [u8]) {
     (ContentType::PNG, include_bytes!("../webpages/logo.png"))
 }
 
+#[get("/favicon.ico")]
+fn favicon() -> &'static [u8] {
+     include_bytes!("../webpages/logo.ico")
+}
+
 // The main function of the website.
 #[launch]
 async fn rocket() -> _ {
@@ -54,7 +59,7 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
-        .mount("/", routes![logo])
+        .mount("/", routes![logo, favicon])
         .mount(
             "/article",
             routes![

@@ -50,6 +50,8 @@
       </div>
     </div>
   </section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+
 
     <!-- Script for mobile menu toggle -->
   <script>
@@ -62,8 +64,8 @@
               const button = document.createElement("button");
               button.classList.add("article-card", "hover:bg-gray-200", "rounded-lg", "transition", "duration-300", "bg-white", "shadow-md");
               button.innerHTML = `
-              <h2 class="text-xl font-bold mb-2">${data.title}</h2>
-              <p class="text-gray-600">${data.intro}</p>
+              <h2 class="text-xl font-bold mb-2">${DOMPurify.sanitize(data.title)}</h2>
+              <p class="text-gray-600">${DOMPurify.sanitize(data.intro)}</p>
               <img src="/article/img/${data.id}" alt="Article Image" class="rounded-lg w-full mt-4">
               `;
               button.onclick = () => {

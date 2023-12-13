@@ -70,31 +70,44 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   <script>
-      fetch("/article/random").then(reponse => reponse.json()).then(data=>{
-        const article = document.getElementById('article')
-        const  button_container = document.createElement('button')
-        button_container.setAttribute('class', 'mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg')
-      button_container.onclick = function(){
-        window.location.href = '/article-open/' + data.id
-      }
-      const h2 = document.createElement('h2')
-      h2.setAttribute('class', 'text-2xl font-bold')  
-      h2.innerText = data.title
-      const p = document.createElement('p')
-      p.setAttribute('class', 'text-lg')
-      p.innerText = data.intro
-      const img = document.createElement('img')
-      img.setAttribute('class', 'rounded-lg w-full ')
-      img.src = '/article/img/' + data.id
-      
-      button_container.appendChild(h2)
-      button_container.appendChild(p)
-      button_container.appendChild(img)
-      
-      article.appendChild(button_container)
-      
-    })
+      fetch("/article/random")
+  .then(response => response.json())
+  .then(data => {
+    const article = document.getElementById('article');
+    const button_container = document.createElement('button');
+    button_container.setAttribute('class', 'mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg');
+    button_container.onclick = function () {
+      window.location.href = '/article-open/' + data.id;
+    };
+
+    const h2 = document.createElement('h2');
+    h2.setAttribute('class', 'text-2xl font-bold');
+    h2.innerText = DOMPurify.sanitize(data.title); // Sanitize the title
+    if (h2.innerText.length == '') {
+      h2.innerText = 'No Title';
+    }
+
+    const p = document.createElement('p');
+    p.setAttribute('class', 'text-lg');
+    p.innerText = DOMPurify.sanitize(data.intro); // Sanitize the intro
+
+    if (p.innerText.length == '') {
+      p.innerText = 'No Intro';
+    }
+
+    const img = document.createElement('img');
+    img.setAttribute('class', 'rounded-lg w-full');
+    img.src = '/article/img/' + data.id;
+
+    button_container.appendChild(h2);
+    button_container.appendChild(p);
+    button_container.appendChild(img);
+
+    article.appendChild(button_container);
+  });
+
 
     const mobileMenu = document.getElementById('mobileMenu')
     document.getElementById('menuBtn').addEventListener('click', function () {
