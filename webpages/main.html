@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
   <title>CoCoSol WebSite</title>
 </head>
 
@@ -73,7 +73,7 @@
         const  button_container = document.createElement('button')
         button_container.setAttribute('class', 'mt-7 hover:bg-gray-200 transition duration-300 p-2 w-full bg-white rounded-lg')
       button_container.onclick = function(){
-        window.location.href = '/article/' + data.id
+        window.location.href = '/article-open/' + data.id
       }
       const h2 = document.createElement('h2')
       h2.setAttribute('class', 'text-2xl font-bold')  

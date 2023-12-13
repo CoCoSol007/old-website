@@ -5,17 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/style.css" rel="stylesheet">
-  <title>Services - CoCoSol</title>
+  <title>About Me - CoCoSol</title>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 ">
   <!-- Navigation -->
   <nav class="bg-gray-800 p-4">
     <div class="container mx-auto flex justify-between items-center">
       <div class="text-white font-bold text-xl">CoCoSol</div>
       <ul class="hidden md:flex space-x-4">
         <li><a href="/" class="text-white hover:text-blue-500">Home</a></li>
-        <li><a href="/services" class="text-white hover:text-blue-500">Servicess</a></li>
+        <li><a href="/services" class="text-white hover:text-blue-500">Services</a></li>
         <li><a href="/projects" class="text-white hover:text-blue-500">Article</a></li>
         <li><a href="/about" class="text-white hover:text-blue-500">About me</a></li>
       </ul>
@@ -32,31 +32,33 @@
     <div id="mobileMenu" class="md:hidden mt-2 hidden">
       <ul class="flex flex-col space-y-2">
         <li><a href="/" class="text-white">Home</a></li>
-        <li><a href="/services" class="text-white">Servicess</a></li>
+        <li><a href="/services" class="text-white">Services</a></li>
         <li><a href="/projects" class="text-white">Article</a></li>
         <li><a href="/about" class="text-white">About me</a></li>
       </ul>
     </div>
   </nav>
+  <!-- au centre -->
+  <article class="prose max-w-none mx-auto my-10 p-8 bg-white rounded-lg shadow-md"></article>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-  <!-- Services Section -->
-  <section class="container mx-auto my-10 p-8 bg-white rounded-lg shadow-md">
-    <h1 class="text-4xl font-bold mb-6">Our Services</h1>
+        const path = window.location;
+        const uid = path.toString().split("/").slice(-1)[0];
 
-    <!-- Service 1: Password Generator -->
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold mb-4">Password Generator</h2>
-      <p class="text-gray-600">I am currently working on a powerful password generator to help you create secure
-        passwords for your accounts. Stay tuned for updates!</p>
-    </div>
+        fetch("/article/get/" + uid)
+            .then(response => response.text()).then(data => {
+                const markdown = marked(data);
+                console.log(markdown);
+                // on transforme le markdown en html
+                const html = markdown;
+                // on met le html dans le markdown
+                document.querySelector(".prose").innerHTML = html;
+            })});
+    </script>
 
-    <!-- Service 2: Cloud Service -->
-    <div>
-      <h2 class="text-2xl font-bold mb-4">Cloud Service</h2>
-      <p class="text-gray-600">work in progress... sorry for the inconvenience</p>
-    </div>
-  </section>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.7/marked.min.js"></script>
+  
   <script>
     const mobileMenu = document.getElementById('mobileMenu')
     document.getElementById('menuBtn').addEventListener('click', function () {

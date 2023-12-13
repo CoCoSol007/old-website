@@ -32,6 +32,8 @@ raw_files! {
     "/services" => services_page(HTML, "../webpages/services.html"),
     "/github-mark.svg" => github_mark(SVG, "../webpages/github-mark.svg"),
     "/add" => temp(HTML, "../webpages/temp.html"),
+    "/article-open/<_>" => article(HTML, "../webpages/article.html"),
+    "/style.css" => style(CSS, "../webpages/style.css"),
 }
 
 // The main function of the website.
