@@ -1,6 +1,7 @@
 //! This module contain programs about Articles
 
 use rand::Rng;
+use rocket::http::CookieJar;
 use rocket::serde::json::Json;
 use rocket::{form::Form, fs::TempFile, get, http::ContentType, post, serde::uuid::Uuid, FromForm};
 use serde::{Deserialize, Serialize};
@@ -28,7 +29,13 @@ pub struct Upload<'f> {
 
 // a fonction that get new articles
 #[post("/new", format = "multipart/form-data", data = "<form>")]
-pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
+pub async fn new_article(mut form: Form<Upload<'_>>, cookies: &CookieJar<'_>) -> std::io::Result<()> {
+    if !super::is_admin(cookies) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "You don't have the permision",
+        ));
+    }
     // upload the file
     let file_id: String = Uuid::new_v4()
         .hyphenated()

@@ -1,9 +1,12 @@
 //! The main program of my website.
 pub mod articles;
+pub mod admin;
 use crate::articles::*;
+use crate::admin::*;
 use once_cell::sync::Lazy;
 use rocket::{get, http::ContentType, launch, routes, serde::uuid::Uuid, Config, Route};
 use std::{collections::HashMap, sync::RwLock};
+
 
 /// a struct to store articles.
 static ARTICLES: Lazy<RwLock<HashMap<Uuid, Article>>> = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -31,14 +34,9 @@ raw_files! {
     "/about" => about_page(HTML, "../webpages/about.html"),
     "/services" => services_page(HTML, "../webpages/services.html"),
     "/github-mark.svg" => github_mark(SVG, "../webpages/github-mark.svg"),
-    "/add" => temp(HTML, "../webpages/temp.html"),
     "/article-open/<_>" => article(HTML, "../webpages/article.html"),
     "/style.css" => style(CSS, "../webpages/style.css"),
-}
-
-#[get("/logo")]
-fn logo() -> (ContentType, &'static [u8]) {
-    (ContentType::PNG, include_bytes!("../webpages/logo.png"))
+    "/logo" => logo_svg(SVG, "../webpages/logo.svg"),
 }
 
 #[get("/favicon.ico")]
@@ -53,13 +51,12 @@ async fn rocket() -> _ {
 
     rocket::build()
         .configure(Config {
-            // pas de output
             log_level: rocket::config::LogLevel::Critical,
             port: 80,
             ..Default::default()
         })
         .mount("/", raw_routes())
-        .mount("/", routes![logo, favicon])
+        .mount("/", routes![favicon])
         .mount(
             "/article",
             routes![
@@ -70,5 +67,5 @@ async fn rocket() -> _ {
                 get_minia_article,
                 get_random_article
             ],
-        )
+        ).mount("/admin", routes![login_admin, admin_main, new_article_page])
 }
