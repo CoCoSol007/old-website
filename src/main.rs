@@ -1,10 +1,13 @@
 //! The main program of my website.
+use serde::{Deserialize, Serialize};
 pub mod articles;
 pub mod admin;
 use crate::articles::*;
 use crate::admin::*;
 use once_cell::sync::Lazy;
-use rocket::{get, http::ContentType, launch, routes, serde::uuid::Uuid, Config, Route};
+use rocket::{get,post, http::ContentType, launch, routes, serde::uuid::Uuid, Config, Route, form::Form, FromForm};
+use rocket::response::Redirect;
+use std::io::Write;
 use std::{collections::HashMap, sync::RwLock};
 
 
@@ -39,6 +42,28 @@ raw_files! {
     "/logo" => logo_svg(SVG, "../webpages/logo.svg"),
 }
 
+
+
+/// a struct to store messages.
+#[derive(Serialize, Deserialize, Clone, Debug, FromForm)]
+struct Msg{
+    name: String,
+    email: String,
+    message: String
+}
+
+#[post("/send_msg" , format = "multipart/form-data" , data = "<data>", )]
+fn send_msg(data: Form<Msg>) -> Redirect {
+    // load msg in json file
+    
+    let mut file = std::fs::File::create("data/msg.json").unwrap();
+    let msg = serde_json::to_string(&data.clone()).unwrap();
+    file.write_all(msg.as_bytes()).unwrap(); 
+    
+    // load message in a json
+    Redirect::to("/")
+}
+
 #[get("/favicon.ico")]
 fn favicon() -> &'static [u8] {
      include_bytes!("../webpages/logo.ico")
@@ -56,7 +81,7 @@ async fn rocket() -> _ {
             ..Default::default()
         })
         .mount("/", raw_routes())
-        .mount("/", routes![favicon])
+        .mount("/", routes![favicon, send_msg])
         .mount(
             "/article",
             routes![
