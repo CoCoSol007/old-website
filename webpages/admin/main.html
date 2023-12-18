@@ -43,10 +43,20 @@
   <section class="container mx-auto my-10 p-8 bg-white rounded-lg shadow-md">
     <h1 class="text-4xl font-bold mb-6">ADMIN PAGE</h1>
 
-    create a new article
+    create a new article :
 
-    <a href="/admin/new_article">here</a>
-    
+    <button onclick="window.location.href = '/admin/new_article'"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      New article
+    </button>
+
+     Modify an article :
+
+    <button onclick="window.location.href = '/admin/modify_article'"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      Modify article
+    </button>
+  </section>
 
   <script>
     const mobileMenu = document.getElementById('mobileMenu')
