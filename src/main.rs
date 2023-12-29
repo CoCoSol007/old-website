@@ -9,6 +9,8 @@ use rocket::{get,post, http::ContentType, launch, routes, serde::uuid::Uuid, Con
 use rocket::response::Redirect;
 use std::io::Write;
 use std::{collections::HashMap, sync::RwLock};
+use std::net::IpAddr;
+
 
 
 /// a struct to store articles.
@@ -73,12 +75,14 @@ fn favicon() -> &'static [u8] {
 #[launch]
 async fn rocket() -> _ {
     load_article();
-
+    let address_string = "192.168.1.56";
+    let address: IpAddr = address_string.parse().expect("Erreur lors de la conversion de l'adresse");
     rocket::build()
         .configure(Config {
             log_level: rocket::config::LogLevel::Critical,
             port: 80,
-            ..Default::default()
+            address,
+	    ..Default::default()
         })
         .mount("/", raw_routes())
         .mount("/", routes![favicon, send_msg])
