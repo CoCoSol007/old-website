@@ -5,11 +5,17 @@ I created this website in two parts:
 - Back end: Rust using Rocket
 
 # Features
-Currently, the project is in development, but you can:
 
-- Post articles (upload Markdown)
+on this website, you can acces to admin page :
+```
+http://localhost/admin
+```
+----
+you can : 
+- post article with an image, title, introdution and the article : a markdown
+- read article with a beautiful UI
 
-In the future, you will be able to:
+### WIP Features
 
-- Link Git projects with the website and post articles about them
-- Modify existing articles
+you will be able to :
+- edit and suppr article.
