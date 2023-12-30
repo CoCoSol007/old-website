@@ -1,9 +1,20 @@
 //! The main program of my website.
+use serde::{Deserialize, Serialize};
+pub mod admin;
 pub mod articles;
+use crate::admin::*;
 use crate::articles::*;
 use once_cell::sync::Lazy;
-use rocket::{get, http::ContentType, launch, routes, serde::uuid::Uuid, Config, Route};
+use rocket::response::Redirect;
+use rocket::{
+    form::Form, get, http::ContentType, launch, post, routes, serde::uuid::Uuid, Config, FromForm,
+    Route,
+};
+use std::io::Write;
 use std::{collections::HashMap, sync::RwLock};
+use std::net::IpAddr;
+
+
 
 /// a struct to store articles.
 static ARTICLES: Lazy<RwLock<HashMap<Uuid, Article>>> = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -26,25 +37,39 @@ macro_rules! raw_files {
 }
 
 raw_files! {
-    "/" => main_page(HTML, "../webpages/home.html"),
-    "/home.html" => wave(HTML, "../webpages/home.html"),
-    "/about.html" => aboute_me_page(HTML, "../webpages/about.html"),
-    "/articles.html" => articles_page(HTML, "../webpages/articles.html"),
-    "/projects.html" => projects_page(HTML, "../webpages/projects.html"),
-    "/add_article.html" => add_article_page(HTML, "../webpages/add_article.html"),
+    "/" => main_page(HTML, "../webpages/main.html"),
+    "/projects" => projects_page(HTML, "../webpages/projects.html"),
+    "/about" => about_page(HTML, "../webpages/about.html"),
+    "/services" => services_page(HTML, "../webpages/services.html"),
+    "/github-mark.svg" => github_mark(SVG, "../webpages/github-mark.svg"),
+    "/article-open/<_>" => article(HTML, "../webpages/article.html"),
     "/style.css" => style(CSS, "../webpages/style.css"),
-    "/github-mark.png" => github_mark(SVG, "../webpages/github-mark.svg"),
-    "/contact_me.png" => contact_me_mark(SVG, "../webpages/contact_me.svg"),
-    "/article/<_>" => article_page(HTML, "../webpages/article.html"),
+    "/logo" => logo_svg(SVG, "../webpages/logo.svg"),
 }
 
-/// a fonction to give the icon of the webpage.
-#[get("/favicon.ico")]
-const fn favicon() -> (ContentType, &'static [u8]) {
-    let ico_data: &'static [u8] = include_bytes!("../webpages/favicon.ico");
-    let content_type = ContentType::Icon;
+/// a struct to store messages.
+#[derive(Serialize, Deserialize, Clone, Debug, FromForm)]
+struct Msg {
+    name: String,
+    email: String,
+    message: String,
+}
 
-    (content_type, ico_data)
+#[post("/send_msg", format = "multipart/form-data", data = "<data>")]
+fn send_msg(data: Form<Msg>) -> Redirect {
+    // load msg in json file
+
+    let mut file = std::fs::File::create("data/msg.json").unwrap();
+    let msg = serde_json::to_string(&data.clone()).unwrap();
+    file.write_all(msg.as_bytes()).unwrap();
+
+    // load message in a json
+    Redirect::to("/")
+}
+
+#[get("/favicon.ico")]
+fn favicon() -> &'static [u8] {
+    include_bytes!("../webpages/logo.ico")
 }
 
 // The main function of the website.
@@ -57,17 +82,18 @@ async fn rocket() -> _ {
         .merge(("port", 80))
         .merge(("worker_count", 4))
         .merge(("log_level", rocket::config::LogLevel::Critical))
-        .merge(("address", "127.0.0.1"));
+        .merge(("address", IpAddr::from([127, 0, 0, 1])));
 
     let config = Config::from(figment);
 
     rocket::build()
         .configure(config)
         .mount("/", raw_routes())
-        .mount("/", routes![favicon])
+        .mount("/", routes![favicon, send_msg])
         .mount(
             "/article",
             routes![
+                get_images,
                 new_article,
                 get_article_list,
                 get_article,
@@ -75,4 +101,5 @@ async fn rocket() -> _ {
                 get_random_article
             ],
         )
+        .mount("/admin", routes![login_admin, admin_main, new_article_page])
 }

@@ -5,10 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/style.css" rel="stylesheet">
-  <title>CoCoSol</title>
+  <title>ADMIN - CoCoSol</title>
 </head>
 
 <body class="bg-gray-100">
+
   <!-- Navigation -->
   <nav class="bg-gray-800 p-4">
     <div class="container mx-auto flex justify-between items-center">
@@ -39,46 +40,29 @@
     </div>
   </nav>
 
-  <!-- Articles Section -->
-  <section class="bg-white-50 py-10">
-    <div class="container mx-auto">
-      <h1 class="text-4xl font-bold mb-8">Latest Articles</h1>
-      <div id="article" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Replace the following with your actual articles -->
-       
-        <!-- Add more article cards as needed -->
-      </div>
+  <section class="container mx-auto my-10 flex justify-center items-center">
+    <div class="p-8 bg-white rounded-lg shadow-md max-w-md">
+      <h1 class="text-4xl font-bold mb-6">Sign in</h1>
+      <form action="/admin/login" method="post">
+  
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <input type="password" name="password"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+  
+        <div class="mb-6">
+          <input type="submit"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            value="Sign In">
+        </div>
+  
+      </form>
     </div>
   </section>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+  
 
-
-    <!-- Script for mobile menu toggle -->
   <script>
-      fetch("/article/list").then(response => {
-        response.json().then(data => {
-          for (element of data) {
-          fetch("/article/minia/"+ element).then(response => {
-            response.json().then(data => {
-              const container = document.getElementById("article");
-              const button = document.createElement("button");
-              button.classList.add("article-card", "hover:bg-gray-200", "rounded-lg", "transition", "duration-300", "bg-white", "shadow-md");
-              button.innerHTML = `
-              <h2 class="text-xl font-bold mb-2">${DOMPurify.sanitize(data.title)}</h2>
-              <p class="text-gray-600">${DOMPurify.sanitize(data.intro)}</p>
-              <img src="/article/img/${data.id}" alt="Article Image" class="rounded-lg w-full mt-4">
-              `;
-              button.onclick = () => {
-                window.location.href = "/article-open/" + data.id
-              }
-              container.appendChild(button);
-            })
-          })              
-          }
-        })
-      })
-
-
     const mobileMenu = document.getElementById('mobileMenu')
     document.getElementById('menuBtn').addEventListener('click', function () {
       mobileMenu.classList.toggle('hidden');
