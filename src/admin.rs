@@ -1,12 +1,7 @@
-
 use rocket::http::{Cookie, CookieJar};
 use rocket::response::Redirect;
-use rocket::{
-    get, http::ContentType,post
-    ,
-};
+use rocket::{get, http::ContentType, post};
 use sha1::{Digest, Sha1};
-
 
 /// a function to login as admin.
 #[post("/login", data = "<password>")]
@@ -21,9 +16,15 @@ pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect 
 #[get("/")]
 pub fn admin_main(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
     if is_admin(cookies) {
-        (ContentType::HTML, include_str!("../webpages/admin/main.html"))
+        (
+            ContentType::HTML,
+            include_str!("../webpages/admin/main.html"),
+        )
     } else {
-        (ContentType::HTML, include_str!("../webpages/admin/login.html"))
+        (
+            ContentType::HTML,
+            include_str!("../webpages/admin/login.html"),
+        )
     }
 }
 
@@ -35,7 +36,10 @@ pub fn new_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) 
             include_str!("../webpages/admin/new_article.html"),
         )
     } else {
-        (ContentType::HTML, include_str!("../webpages/admin/login.html"))
+        (
+            ContentType::HTML,
+            include_str!("../webpages/admin/login.html"),
+        )
     }
 }
 

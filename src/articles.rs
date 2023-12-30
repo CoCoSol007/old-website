@@ -29,7 +29,10 @@ pub struct Upload<'f> {
 
 // a fonction that get new articles
 #[post("/new", format = "multipart/form-data", data = "<form>")]
-pub async fn new_article(mut form: Form<Upload<'_>>, cookies: &CookieJar<'_>) -> std::io::Result<()> {
+pub async fn new_article(
+    mut form: Form<Upload<'_>>,
+    cookies: &CookieJar<'_>,
+) -> std::io::Result<()> {
     if !super::is_admin(cookies) {
         return Err(std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -109,7 +112,7 @@ pub fn get_images(id: Uuid) -> Option<(ContentType, Vec<u8>)> {
             Some((ContentType::PNG, buf))
         } else {
             println!("request without great uuid !");
-            None 
+            None
         }
     } else {
         println!("failed to open data/img/{}.png", id.to_owned());
