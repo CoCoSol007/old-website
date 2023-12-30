@@ -96,7 +96,7 @@ async fn rocket() -> _ {
         .merge(("port", 80))
         .merge(("worker_count", 4))
         .merge(("log_level", rocket::config::LogLevel::Critical))
-        .merge(("address", IpAddr::from([127, 0, 0, 1])));
+        .merge(("address", IpAddr::from([0, 0, 0, 0])));
 
     let config = Config::from(figment);
 
