@@ -6,7 +6,7 @@ use sha1::{Digest, Sha1};
 /// a function to login as admin.
 #[post("/login", data = "<password>")]
 pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect {
-    if sha1_hash(&password) == "7e4c5bcc818465ce3e5d5b66b855cbf54cb3249a" {
+    if sha1_hash(&password) == "fde67e0e5e23a87f68342176dd51e99233d57cd4" {
         // on ajoute le cookie prive
         cookies.add_private(Cookie::new("admin", "true"));
     }
