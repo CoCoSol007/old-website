@@ -1,4 +1,5 @@
 //! The main program of my website.
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 pub mod admin;
 pub mod articles;
@@ -72,13 +73,26 @@ fn favicon() -> &'static [u8] {
     include_bytes!("../webpages/logo.ico")
 }
 
+
+fn generate_secret_key() -> String {
+    // Utiliser la bibliothèque rand pour générer des octets aléatoires
+    let mut rng = rand::thread_rng();
+    let random_bytes: Vec<u8> = (0..32).map(|_| rng.gen()).collect();
+
+    // Convertir les octets en une chaîne hexadécimale
+    let hex_string: String = random_bytes.iter().map(|b| format!("{:02x}", b)).collect();
+
+    hex_string
+}
+
+
 // The main function of the website.
 #[launch]
 async fn rocket() -> _ {
     load_article();
 
     let figment = Config::figment()
-        .merge(("secret_key", "hPrYyЭRiMyµ5sBB1π+CMæ1køFsåqKvBiQJxBVHQk="))
+        .merge(("secret_key", generate_secret_key()))
         .merge(("port", 80))
         .merge(("worker_count", 4))
         .merge(("log_level", rocket::config::LogLevel::Critical))
