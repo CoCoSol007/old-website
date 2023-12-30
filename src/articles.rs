@@ -1,11 +1,11 @@
 //! This module contain programs about Articles
 
+use rand::Rng;
+use rocket::serde::json::Json;
 use rocket::{form::Form, fs::TempFile, get, post, serde::uuid::Uuid, FromForm};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::Read};
-use rocket::serde::json::Json;
 use std::fs::File;
-use rand::Rng;
+use std::{collections::HashMap, io::Read};
 
 /// An article.
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -53,12 +53,11 @@ pub async fn new_article(mut form: Form<Upload<'_>>) -> std::io::Result<()> {
     if result.is_err() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::Other,
-            "Failed to write articles", 
-        ))
+            "Failed to write articles",
+        ));
     } else {
-        return Ok(())
+        return Ok(());
     }
-
 }
 
 // a fonction to load article.json a put the data into ARTICLES
@@ -85,7 +84,7 @@ pub fn get_random_article() -> Json<Option<Article>> {
 }
 
 #[get("/list")]
-pub fn get_article_list() ->  Json<Vec<Uuid>> {
+pub fn get_article_list() -> Json<Vec<Uuid>> {
     Json(super::ARTICLES.read().unwrap().keys().copied().collect())
 }
 
@@ -107,10 +106,9 @@ pub async fn get_article(id: Uuid) -> String {
     // on download larticle dans /data/articles/id.md
     let mut file = File::open(format!("./data/articles/{}.md", id)).expect("Failed to open file");
     let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("Failed to read file").to_string();
+    file.read_to_string(&mut contents)
+        .expect("Failed to read file")
+        .to_string();
 
     contents
-
-
-    
 }
