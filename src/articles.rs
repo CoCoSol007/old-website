@@ -45,10 +45,10 @@ pub async fn new_article(
         .encode_lower(&mut Uuid::encode_buffer())
         .to_owned();
     let file_name = String::from("./data/articles/") + &file_id + ".md";
-    form.file.persist_to(file_name).await?;
+    form.file.copy_to(file_name).await?;
 
     let img_name = String::from("./data/img/") + &file_id + ".png";
-    form.img.persist_to(img_name).await?;
+    form.img.copy_to(img_name).await?;
 
     // create an article.
     let article = Article {

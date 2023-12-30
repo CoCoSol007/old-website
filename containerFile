@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-FROM scratch
-RUN mkdir /tmp
+FROM alpine:latest
+WORKDIR /app
 COPY --from=builder /app/target/release/website .
 CMD ["./website"]
