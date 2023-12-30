@@ -52,14 +52,27 @@ const fn favicon() -> (ContentType, &'static [u8]) {
 async fn rocket() -> _ {
     load_article();
 
+    let figment = Config::figment()
+        .merge(("secret_key", "hPrYyЭRiMyµ5sBB1π+CMæ1køFsåqKvBiQJxBVHQk="))
+        .merge(("port", 80))
+        .merge(("worker_count", 4))
+        .merge(("log_level", rocket::config::LogLevel::Critical))
+        .merge(("address", "127.0.0.1"));
+
+    let config = Config::from(figment);
+
     rocket::build()
-        .configure(Config {
-            // pas de output
-            log_level: rocket::config::LogLevel::Critical,
-            port: 80,
-            ..Default::default()
-        })
+        .configure(config)
         .mount("/", raw_routes())
         .mount("/", routes![favicon])
-        .mount("/article", routes![new_article, get_article_list, get_article, get_minia_article, get_random_article])
+        .mount(
+            "/article",
+            routes![
+                new_article,
+                get_article_list,
+                get_article,
+                get_minia_article,
+                get_random_article
+            ],
+        )
 }
