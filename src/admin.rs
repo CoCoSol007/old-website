@@ -1,12 +1,17 @@
 use rocket::http::{Cookie, CookieJar};
 use rocket::response::Redirect;
 use rocket::{get, http::ContentType, post};
-use sha1::{Digest, Sha1};
+use sha2::{Digest, Sha256};
 
 /// a function to login as admin.
 #[post("/login", data = "<password>")]
 pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect {
-    if sha1_hash(&password) == "7e4c5bcc818465ce3e5d5b66b855cbf54cb3249a" {
+    if sha1_hash(&password)
+        == [
+            167, 201, 235, 168, 107, 239, 232, 178, 103, 25, 164, 157, 93, 169, 173, 96, 229, 239,
+            6, 73, 25, 124, 242, 60, 141, 104, 195, 181, 223, 43, 207, 130,
+        ]
+    {
         // on ajoute le cookie prive
         cookies.add_private(Cookie::new("admin", "true"));
     }
@@ -44,10 +49,13 @@ pub fn new_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) 
 }
 
 /// a function to hash a string.
-fn sha1_hash(input: &str) -> String {
-    let mut hasher = Sha1::new();
+fn sha1_hash(input: &str) -> [u8; 32] {
+    let mut hasher = Sha256::new();
     hasher.update(input);
-    format!("{:x}", hasher.finalize())
+    // `update` can be called repeatedly and is generic over `AsRef<[u8]>`
+    hasher.update("String data");
+    // Note that calling `finalize()` consumes hasher
+    hasher.finalize().into()
 }
 
 /// a fonction to get if the user is admin.

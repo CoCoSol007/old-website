@@ -12,10 +12,8 @@ use rocket::{
     Route,
 };
 use std::io::Write;
-use std::{collections::HashMap, sync::RwLock};
 use std::net::IpAddr;
-
-
+use std::{collections::HashMap, sync::RwLock};
 
 /// a struct to store articles.
 static ARTICLES: Lazy<RwLock<HashMap<Uuid, Article>>> = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -73,7 +71,6 @@ fn favicon() -> &'static [u8] {
     include_bytes!("../webpages/logo.ico")
 }
 
-
 fn generate_secret_key() -> String {
     // Utiliser la bibliothèque rand pour générer des octets aléatoires
     let mut rng = rand::thread_rng();
@@ -84,7 +81,6 @@ fn generate_secret_key() -> String {
 
     hex_string
 }
-
 
 // The main function of the website.
 #[launch]
