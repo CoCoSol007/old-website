@@ -41,47 +41,50 @@
   </nav>
 
   <!-- Services Section -->
+  <!-- Search and Select Section -->
   <section class="container mx-auto my-10 p-8 bg-white rounded-lg shadow-md max-w-md">
-    <h1 class="text-4xl font-bold mb-6">Sign in</h1>
+    <h1 class="text-4xl font-bold mb-6">Search and Choose Articles</h1>
 
-    <form action="/article/new" method="post" enctype="multipart/form-data" class="space-y-4">
+    <form action="../article/delete_article" enctype="application/x-www-form-urlencoded" method="post">
+        <!-- Select Bar -->
+      <div class="mb-4">
+        <label for="articleSelect" class="block text-sm font-medium text-gray-700">Choose Article</label>
+        <select name="articleId" id="articleSelect" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+        </select>
+      </div>
+      <br>
 
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-        <input id="name" type="text" name="title"
-          class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+        <input type="submit" value="Delete" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       </div>
 
-      <div>
-        <label for="intro" class="block text-sm font-medium text-gray-700">Intro</label>
-        <input id="intro" type="text" name="intro"
-          class="mt-1 p-2 border border-gray-300 rounded-md w-full">
-      </div>
-
-      <div>
-        <label for="img" class="block text-sm font-medium text-gray-700">Image</label>
-        <input id="img" type="file" name="img" accept=".png"
-          class="mt-1 p-2 border border-gray-300 rounded-md w-full">
-      </div>
-
-      <div>
-        <label for="file" class="block text-sm font-medium text-gray-700">File</label>
-        <input id="file" type="file" name="file" accept=".md"
-          class="mt-1 p-2 border border-gray-300 rounded-md w-full">
-      </div> <br>
-
-      <div>
-        <input type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-      </div>
-
+        
+        
+        </section>
     </form>
 
     <script>
+      const articleSelect = document.getElementById('articleSelect')
+
+      fetch('../article/list').then(response => response.json()).then(data => {
+        for (const [_, value] of Object.entries(data)) {
+          fetch('../article/minia/' + value).then(response => response.json()).then(data => {
+            const name = data.title
+
+            const option = document.createElement('option')
+            option.value = value
+            option.textContent = name
+            articleSelect.appendChild(option)
+
+          })
+        }
+      })
       const mobileMenu = document.getElementById('mobileMenu')
       document.getElementById('menuBtn').addEventListener('click', function () {
         mobileMenu.classList.toggle('hidden');
       });
+
+
     </script>
 </body>
 

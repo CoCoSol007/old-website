@@ -1,5 +1,7 @@
 //! The main program of my website.
 use rand::Rng;
+use rocket::catch;
+use rocket::catchers;
 use serde::{Deserialize, Serialize};
 pub mod admin;
 pub mod articles;
@@ -9,7 +11,7 @@ use once_cell::sync::Lazy;
 use rocket::response::Redirect;
 use rocket::{
     form::Form, get, http::ContentType, launch, post, routes, serde::uuid::Uuid, Config, FromForm,
-    Route,
+    Route
 };
 use std::io::Write;
 use std::net::IpAddr;
@@ -54,6 +56,11 @@ struct Msg {
     message: String,
 }
 
+#[catch(404)]
+fn handle_404() -> (ContentType, &'static str) {
+    (ContentType::HTML, include_str!("../webpages/404.html"))
+}
+
 #[post("/send_msg", format = "multipart/form-data", data = "<data>")]
 fn send_msg(data: Form<Msg>) -> Redirect {
     // load msg in json file
@@ -92,11 +99,15 @@ async fn rocket() -> _ {
         .merge(("port", 80))
         .merge(("worker_count", 4))
         .merge(("log_level", rocket::config::LogLevel::Critical))
-        .merge(("address", IpAddr::from([0, 0, 0, 0])));
+        .merge(("address", IpAddr::from([127, 0, 0, 1])));
 
     let config = Config::from(figment);
 
+    
+
     rocket::build()
+    // for 404 error
+        .register("/", catchers![handle_404])
         .configure(config)
         .mount("/", raw_routes())
         .mount("/", routes![favicon, send_msg])
@@ -108,8 +119,9 @@ async fn rocket() -> _ {
                 get_article_list,
                 get_article,
                 get_minia_article,
-                get_random_article
+                get_random_article,
+                delete_article
             ],
         )
-        .mount("/admin", routes![login_admin, admin_main, new_article_page])
+        .mount("/admin", routes![login_admin, admin_main, new_article_page, modify_article_page])
 }
