@@ -18,6 +18,7 @@ pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect 
     Redirect::to("/admin")
 }
 
+/// a function for send the admin main page.
 #[get("/")]
 pub fn admin_main(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
     if is_admin(cookies) {
@@ -33,6 +34,7 @@ pub fn admin_main(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
     }
 }
 
+/// a function for send the new article page.
 #[get("/new_article")]
 pub fn new_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
     if is_admin(cookies) {
@@ -48,6 +50,8 @@ pub fn new_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) 
     }
 }
 
+
+/// a function for send the modify article page.
 #[get("/modify_article")]
 pub fn modify_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
     if is_admin(cookies) {

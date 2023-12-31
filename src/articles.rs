@@ -30,23 +30,34 @@ pub struct Upload<'f> {
 
 // a fonction that get new articles
 #[post("/new", format = "multipart/form-data", data = "<form>")]
-pub async fn new_article(
-    mut form: Form<Upload<'_>>,
-    cookies: &CookieJar<'_>,
-) -> Redirect {
+pub async fn new_article(mut form: Form<Upload<'_>>, cookies: &CookieJar<'_>) -> Redirect {
+    // check if the user is admin
     if !super::is_admin(cookies) {
         return Redirect::to("/");
     }
+
     // upload the file
-    let file_id: String = Uuid::new_v4()
+    // gen a random id
+    let random_uuid = Uuid::new_v4();
+
+    let file_id = random_uuid
         .hyphenated()
         .encode_lower(&mut Uuid::encode_buffer())
         .to_owned();
+
+    // create the name of the file
     let file_name = String::from("./data/articles/") + &file_id + ".md";
-    form.file.copy_to(file_name).await.unwrap();
+    // copy the file into data
+    if let Err(e) = form.file.copy_to(file_name).await {
+        println!("error during copy of the markdown file: {}", e);
+        return Redirect::to("/admin");
+    }
 
     let img_name = String::from("./data/img/") + &file_id + ".png";
-    form.img.copy_to(img_name).await.unwrap();
+    if let Err(e) = form.img.copy_to(img_name).await {
+        println!("error during copy of the image file: {}", e);
+        return Redirect::to("/admin");
+    }
 
     // create an article.
     let article = Article {
@@ -56,58 +67,130 @@ pub async fn new_article(
     };
 
     // save the article
-    let mut articles = super::ARTICLES.write().unwrap();
-    let uuid = Uuid::parse_str(&file_id).unwrap();
-    articles.insert(uuid, article);
+    let articles = super::ARTICLES.write();
+    if let Ok(mut articles) = articles {
+        articles.insert(random_uuid, article);
 
-    // update the memory
-    let result = serde_json::to_writer_pretty(&File::create("data/articles.json").unwrap(), &*articles);
+        // get file in hard memory
+        let memory_file = File::create("data/articles.json");
+        if let Ok(memory_file) = memory_file {
+            // write in memory
+            if let Err(e) = serde_json::to_writer_pretty(memory_file, &*articles) {
+                println!("Failed to write articles.json: {}", e);
+            };
+        } else {
+            println!("Failed to create articles.json : {:?}", memory_file);
+        }
+    } else {
+        println!("Failed to write articles.json : {:?}", articles);
+    }
+
+    // redirect to the admin page
     Redirect::to("/admin")
 }
 
 // a fonction to load article.json a put the data into ARTICLES
 pub fn load_article() {
-    let file = File::open("data/articles.json").expect("Failed to open articles.json");
-    // on affichie si il y a une erreur
-    let articles: HashMap<Uuid, Article> =
-        serde_json::from_reader(file).expect("Failed to read articles");
-    super::ARTICLES.write().unwrap().extend(articles);
+    // open the file
+    let file = File::open("data/articles.json");
+    if let Ok(file) = file {
+        // read the file and put the data into ARTICLES if it didn't work then create an empty hashmap
+        let articles: HashMap<Uuid, Article> =
+            serde_json::from_reader(file).unwrap_or_else(|_| HashMap::new());
+
+        // write the data into ARTICLES
+        if let Ok(mut all_articles) = super::ARTICLES.write() {
+            all_articles.extend(articles);
+        } else {
+            println!("Failed to write articles.json into : {:?}", super::ARTICLES);
+        }
+    } else {
+        println!("Failed to open articles.json : {:?}", file);
+    }
 }
-
-
 
 // a fonction to delete article
-#[post("/delete_article", data = "<id>", format = "application/x-www-form-urlencoded")]
-pub fn delete_article(id: Form<Uuid>, _cookies: &CookieJar<'_>) -> Redirect {
-    let mut articles = super::ARTICLES.write().unwrap();
-    articles.remove(&id);
+#[post(
+    "/delete_article",
+    data = "<id>",
+    format = "application/x-www-form-urlencoded"
+)]
+pub fn delete_article(id: Form<Uuid>, cookies: &CookieJar<'_>) -> Redirect {
+    // check if the user is admin
+    if !super::is_admin(cookies) {
+        return Redirect::to("/");
+    }
 
-    std::fs::remove_file(format!("data/articles/{}.md", id.to_string())).unwrap();
-    std::fs::remove_file(format!("data/img/{}.png", id.to_string())).unwrap();
+    let articles = super::ARTICLES.write();
+    if let Ok(mut articles) = articles {
+        articles.remove(&id);
 
-    let _ = serde_json::to_writer_pretty(&File::create("data/articles.json").unwrap(), &*articles);
+        if let Err(e) = std::fs::remove_file(format!("data/articles/{}.md", id.to_string())) {
+            println!("Failed to delete markdown file : {}", e);
+        }
+        if let Err(e) = std::fs::remove_file(format!("data/img/{}.png", id.to_string())) {
+            println!("Failed to delete image file : {}", e);
+        }
+
+        // get file in hard memory
+        let memory_file = File::create("data/articles.json");
+        if let Ok(memory_file) = memory_file {
+            // write in memory
+            serde_json::to_writer_pretty(memory_file, &*articles)
+                .unwrap_or_else(|_| println!("Failed to write articles.json"));
+        } else {
+            println!("Failed to get or create articles.json : {:?}", memory_file);
+        }
+        return Redirect::to("/admin");
+    }
     Redirect::to("/admin")
-} 
+}
 
-// a function to get a random article
+/// a function to get a random article
 #[get("/random")]
 pub fn get_random_article() -> Json<Option<Article>> {
-    // manage if the articles are empty
-    if super::ARTICLES.read().unwrap().is_empty() {
-        // we send nothing
+    // manage if articles are empty
+    let articles = super::ARTICLES.read();
+
+    if let Err(e) = articles {
+        println!("Failed to read articles.json : {:?}", e);
         return Json(None);
+    } else if let Ok(articles) = articles {
+        if articles.is_empty() {
+            return Json(None);
+        }
+
+        // get all keys
+        let keys: Vec<&Uuid> = articles.keys().collect();
+        // get a random index for random keys
+        let random_index = rand::thread_rng().gen_range(0..keys.len());
+
+        if let Some(article) = articles.get(keys[random_index]) {
+            // return the article at the random index
+            return Json(Some(article.clone()));
+        } else {
+            return Json(None);
+        }
+    } else {
+        Json(None)
     }
-    let articles = super::ARTICLES.read().unwrap();
-    let keys: Vec<&Uuid> = articles.keys().collect();
-    let random_index = rand::thread_rng().gen_range(0..keys.len());
-    Json(Some(articles.get(keys[random_index]).unwrap().clone()))
 }
 
+/// a function to get all articles in  a list
 #[get("/list")]
 pub fn get_article_list() -> Json<Vec<Uuid>> {
-    Json(super::ARTICLES.read().unwrap().keys().copied().collect())
+    // get all articles
+    let articles = super::ARTICLES.read();
+    if let Ok(articles) = articles {
+        // return the list of all articles
+        return Json(articles.keys().copied().collect());
+    } else {
+        println!("Failed to read articles.json : {:?}", articles);
+        Json(vec![])
+    }
 }
 
+// a function to get an article with its id.
 #[get("/img/<id>")]
 pub fn get_images(id: Uuid) -> Option<(ContentType, Vec<u8>)> {
     let file = File::open(format!("data/img/{}.png", id.to_string()));
@@ -132,21 +215,29 @@ pub async fn get_minia_article(id: Uuid) -> Option<Json<Article>> {
     // On récupère l'accès aux articles qui sont dans un RwLock puis,
     // on récupère l'article et si il existe on le convertis en Json
     // sinon on renvoit None ce qui a pour effet de faire une erreur 404
-    super::ARTICLES
-        .read()
-        .unwrap()
-        .get(&id)
-        .map(|article| Json(article.clone()))
+    let article = super::ARTICLES.read();
+
+    if let Ok(articles) = article {
+        if let Some(article) = articles.get(&id) {
+            return Some(Json(article.clone()));
+        }
+    }
+    None
 }
 
+/// we recup the content of the file and return it
 #[get("/get/<id>")]
 pub async fn get_article(id: Uuid) -> String {
-    // on download larticle dans /data/articles/id.md
-    let mut file = File::open(format!("./data/articles/{}.md", id)).expect("Failed to open file");
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)
-        .expect("Failed to read file")
-        .to_string();
+    let file = File::open(format!("./data/articles/{}.md", id));
+    if let Ok(mut file) = file {
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap_or_else(|_| {
+            println!("Failed to read file");
+            0
+        });
 
-    contents
+        return contents;
+    }
+    println!("Failed to open file");
+    "Failed to read file".to_string()
 }

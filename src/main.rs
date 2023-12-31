@@ -11,9 +11,8 @@ use once_cell::sync::Lazy;
 use rocket::response::Redirect;
 use rocket::{
     form::Form, get, http::ContentType, launch, post, routes, serde::uuid::Uuid, Config, FromForm,
-    Route
+    Route,
 };
-use std::io::Write;
 use std::net::IpAddr;
 use std::{collections::HashMap, sync::RwLock};
 
@@ -56,28 +55,28 @@ struct Msg {
     message: String,
 }
 
+/// a fonction to handle 404 for custom 404 error page
 #[catch(404)]
 fn handle_404() -> (ContentType, &'static str) {
     (ContentType::HTML, include_str!("../webpages/404.html"))
 }
 
+/// a fonction to receive a message
 #[post("/send_msg", format = "multipart/form-data", data = "<data>")]
-fn send_msg(data: Form<Msg>) -> Redirect {
-    // load msg in json file
+fn receive_msg(data: Form<Msg>) -> Redirect {
+    // TODO
+    println!("new msg : {:#?}", data);
 
-    let mut file = std::fs::File::create("data/msg.json").unwrap();
-    let msg = serde_json::to_string(&data.clone()).unwrap();
-    file.write_all(msg.as_bytes()).unwrap();
-
-    // load message in a json
     Redirect::to("/")
 }
 
+/// a fonction to serve the favicon
 #[get("/favicon.ico")]
 fn favicon() -> &'static [u8] {
     include_bytes!("../webpages/logo.ico")
 }
 
+/// a fonction to generate a secret key
 fn generate_secret_key() -> String {
     // Utiliser la bibliothèque rand pour générer des octets aléatoires
     let mut rng = rand::thread_rng();
@@ -92,25 +91,30 @@ fn generate_secret_key() -> String {
 // The main function of the website.
 #[launch]
 async fn rocket() -> _ {
+    // load articles
     load_article();
 
+    // generate a secret key and figment the rocket server
     let figment = Config::figment()
         .merge(("secret_key", generate_secret_key()))
         .merge(("port", 80))
         .merge(("worker_count", 4))
         .merge(("log_level", rocket::config::LogLevel::Critical))
-        .merge(("address", IpAddr::from([127, 0, 0, 1])));
+        .merge(("address", IpAddr::from([0, 0, 0, 0])));
 
+    // create a config
     let config = Config::from(figment);
 
-    
-
+    // launch the server with different routes
     rocket::build()
-    // for 404 error
-        .register("/", catchers![handle_404])
+        // apply the config
         .configure(config)
+        // for 404 error
+        .register("/", catchers![handle_404])
+        // for static files
         .mount("/", raw_routes())
-        .mount("/", routes![favicon, send_msg])
+        .mount("/", routes![favicon, receive_msg])
+        // for articles
         .mount(
             "/article",
             routes![
@@ -123,5 +127,14 @@ async fn rocket() -> _ {
                 delete_article
             ],
         )
-        .mount("/admin", routes![login_admin, admin_main, new_article_page, modify_article_page])
+        // for admin
+        .mount(
+            "/admin",
+            routes![
+                login_admin,
+                admin_main,
+                new_article_page,
+                modify_article_page
+            ],
+        )
 }
