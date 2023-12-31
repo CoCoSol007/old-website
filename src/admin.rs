@@ -48,6 +48,21 @@ pub fn new_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) 
     }
 }
 
+#[get("/modify_article")]
+pub fn modify_article_page(cookies: &CookieJar<'_>) -> (ContentType, &'static str) {
+    if is_admin(cookies) {
+        (
+            ContentType::HTML,
+            include_str!("../webpages/admin/edit_articles.html"),
+        )
+    } else {
+        (
+            ContentType::HTML,
+            include_str!("../webpages/admin/login.html"),
+        )
+    }
+}
+
 /// a function to hash a string.
 fn sha1_hash(input: &str) -> [u8; 32] {
     let mut hasher = Sha256::new();

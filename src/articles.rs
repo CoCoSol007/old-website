@@ -2,6 +2,7 @@
 
 use rand::Rng;
 use rocket::http::CookieJar;
+use rocket::response::Redirect;
 use rocket::serde::json::Json;
 use rocket::{form::Form, fs::TempFile, get, http::ContentType, post, serde::uuid::Uuid, FromForm};
 use serde::{Deserialize, Serialize};
@@ -32,12 +33,9 @@ pub struct Upload<'f> {
 pub async fn new_article(
     mut form: Form<Upload<'_>>,
     cookies: &CookieJar<'_>,
-) -> std::io::Result<()> {
+) -> Redirect {
     if !super::is_admin(cookies) {
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "You don't have the permision",
-        ));
+        return Redirect::to("/");
     }
     // upload the file
     let file_id: String = Uuid::new_v4()
@@ -45,10 +43,10 @@ pub async fn new_article(
         .encode_lower(&mut Uuid::encode_buffer())
         .to_owned();
     let file_name = String::from("./data/articles/") + &file_id + ".md";
-    form.file.copy_to(file_name).await?;
+    form.file.copy_to(file_name).await.unwrap();
 
     let img_name = String::from("./data/img/") + &file_id + ".png";
-    form.img.copy_to(img_name).await?;
+    form.img.copy_to(img_name).await.unwrap();
 
     // create an article.
     let article = Article {
@@ -63,15 +61,8 @@ pub async fn new_article(
     articles.insert(uuid, article);
 
     // update the memory
-    let result = serde_json::to_writer_pretty(&File::create("data/articles.json")?, &*articles);
-    if result.is_err() {
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "Failed to write articles",
-        ));
-    } else {
-        return Ok(());
-    }
+    let result = serde_json::to_writer_pretty(&File::create("data/articles.json").unwrap(), &*articles);
+    Redirect::to("/admin")
 }
 
 // a fonction to load article.json a put the data into ARTICLES
@@ -82,6 +73,21 @@ pub fn load_article() {
         serde_json::from_reader(file).expect("Failed to read articles");
     super::ARTICLES.write().unwrap().extend(articles);
 }
+
+
+
+// a fonction to delete article
+#[post("/delete_article", data = "<id>", format = "application/x-www-form-urlencoded")]
+pub fn delete_article(id: Form<Uuid>, _cookies: &CookieJar<'_>) -> Redirect {
+    let mut articles = super::ARTICLES.write().unwrap();
+    articles.remove(&id);
+
+    std::fs::remove_file(format!("data/articles/{}.md", id.to_string())).unwrap();
+    std::fs::remove_file(format!("data/img/{}.png", id.to_string())).unwrap();
+
+    let _ = serde_json::to_writer_pretty(&File::create("data/articles.json").unwrap(), &*articles);
+    Redirect::to("/admin")
+} 
 
 // a function to get a random article
 #[get("/random")]
