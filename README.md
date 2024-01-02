@@ -27,14 +27,14 @@ fn main() {
     println!("{:?}", hashed);
 }
 
-fn sha1_hash(input: &str) -> [u8; 32] {
+fn sha1_hash(input: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(input);
     // `update` can be called repeatedly and is generic over `AsRef<[u8]>`
     hasher.update("String data");
     // Note that calling `finalize()` consumes hasher
-    hasher.finalize().into();
-    let passwd = general_purpose::STANDARD_NO_PAD.encode(hasher)
+    let hasher: [u8; 32] = hasher.finalize().into();
+    general_purpose::STANDARD_NO_PAD.encode(hasher)
 }
 ```
 and run it :
