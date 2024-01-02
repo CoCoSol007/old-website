@@ -9,7 +9,7 @@ use base64::{Engine as _, engine::general_purpose};
 #[post("/login", data = "<password>")]
 pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect {
     // get the env variable password
-    let env_password = env::var("ADMIN_PASSWORD").unwrap_or_default();
+    let env_password = env::var("ADMIN_PASSWORD").expect("env password not found");
     let env_password = general_purpose::STANDARD_NO_PAD.decode(env_password).expect("env password invalid");
     if sha1_hash(&password).as_slice()
         == env_password
