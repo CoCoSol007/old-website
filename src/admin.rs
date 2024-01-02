@@ -2,15 +2,17 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::response::Redirect;
 use rocket::{get, http::ContentType, post};
 use sha2::{Digest, Sha256};
+use std::env;
+use base64::{Engine as _, engine::general_purpose};
 
 /// a function to login as admin.
 #[post("/login", data = "<password>")]
 pub async fn login_admin(cookies: &CookieJar<'_>, password: String) -> Redirect {
-    if sha1_hash(&password)
-        == [
-            167, 201, 235, 168, 107, 239, 232, 178, 103, 25, 164, 157, 93, 169, 173, 96, 229, 239,
-            6, 73, 25, 124, 242, 60, 141, 104, 195, 181, 223, 43, 207, 130,
-        ]
+    // get the env variable password
+    let env_password = env::var("ADMIN_PASSWORD").unwrap_or_default();
+    let env_password = general_purpose::STANDARD_NO_PAD.decode(env_password).expect("env password invalid");
+    if sha1_hash(&password).as_slice()
+        == env_password
     {
         // on ajoute le cookie prive
         cookies.add_private(Cookie::new("admin", "true"));

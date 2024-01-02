@@ -13,3 +13,4 @@ uuid = { version = "1.6.1", features = ["v4"] }
 serde = { version = "1.0.190", features = ["derive"] }
 rand = "0.8.5"
 sha2 = "0.10.8"
+base64 = "0.21.5"
