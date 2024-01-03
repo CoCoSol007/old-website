@@ -2,15 +2,13 @@
 use rand::Rng;
 use rocket::catch;
 use rocket::catchers;
-use serde::{Deserialize, Serialize};
 pub mod admin;
 pub mod articles;
 use crate::admin::*;
 use crate::articles::*;
 use once_cell::sync::Lazy;
-use rocket::response::Redirect;
 use rocket::{
-    form::Form, get, http::ContentType, launch, post, routes, serde::uuid::Uuid, Config, FromForm,
+    get, http::ContentType, launch, routes, serde::uuid::Uuid, Config, 
     Route,
 };
 use std::net::IpAddr;
@@ -47,27 +45,10 @@ raw_files! {
     "/logo" => logo_svg(SVG, "../webpages/logo.svg"),
 }
 
-/// a struct to store messages.
-#[derive(Serialize, Deserialize, Clone, Debug, FromForm)]
-struct Msg {
-    name: String,
-    email: String,
-    message: String,
-}
-
 /// a fonction to handle 404 for custom 404 error page
 #[catch(404)]
 fn handle_404() -> (ContentType, &'static str) {
     (ContentType::HTML, include_str!("../webpages/404.html"))
-}
-
-/// a fonction to receive a message
-#[post("/send_msg", format = "multipart/form-data", data = "<data>")]
-fn receive_msg(data: Form<Msg>) -> Redirect {
-    // TODO
-    println!("new msg : {:#?}", data);
-
-    Redirect::to("/")
 }
 
 /// a fonction to serve the favicon
@@ -113,7 +94,7 @@ async fn rocket() -> _ {
         .register("/", catchers![handle_404])
         // for static files
         .mount("/", raw_routes())
-        .mount("/", routes![favicon, receive_msg])
+        .mount("/", routes![favicon])
         // for articles
         .mount(
             "/article",
